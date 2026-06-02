@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    <ApplicationIcon>assets\app.ico</ApplicationIcon>
+    <AssemblyName>MCAddonErsteller</AssemblyName>
+    <RootNamespace>MCAddonErsteller</RootNamespace>
+    <Version>1.0.0</Version>
+    <FileVersion>1.0.0.0</FileVersion>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <Authors>MC Addon Ersteller</Authors>
+    <Product>MC Addon Ersteller</Product>
+    <Description>Ein kleiner WinForms Launcher zum Erstellen von Minecraft Bedrock .mcaddon Paketen aus BP/RP Ordnern oder ZIP-Dateien.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Update="assets\app.ico" />
+    <None Update="assets\app_icon.png" />
+  </ItemGroup>
+</Project>
