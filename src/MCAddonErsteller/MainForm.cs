@@ -52,6 +52,49 @@ public sealed class MainForm : Form
     ApplyAppIcon();
     BuildUi();
     SetDefaults();
+
+    Shown += MainForm_Shown;
+  }
+
+  private async void MainForm_Shown(object? sender, EventArgs e)
+  {
+    await CheckForUpdatesAsync();
+  }
+
+  private async Task CheckForUpdatesAsync()
+  {
+    try
+    {
+      UpdateStatus("Prüfe Updates ...");
+
+      var update = await UpdateChecker.CheckForUpdateAsync();
+
+      if (update.IsUpdateAvailable)
+      {
+        UpdateStatus($"Update verfügbar: v{update.LatestVersion}");
+
+        DialogResult result = MessageBox.Show(
+          this,
+          $"Eine neue Version ist verfügbar!\n\nAktuell: v{update.CurrentVersion}\nNeu: v{update.LatestVersion}\n\nMöchtest du das Release öffnen?",
+          "Update verfügbar",
+          MessageBoxButtons.YesNo,
+          MessageBoxIcon.Information
+        );
+
+        if (result == DialogResult.Yes)
+        {
+          UpdateChecker.OpenReleasePage();
+        }
+      }
+      else
+      {
+        UpdateStatus("Bereit");
+      }
+    }
+    catch
+    {
+      UpdateStatus("Bereit");
+    }
   }
 
 
