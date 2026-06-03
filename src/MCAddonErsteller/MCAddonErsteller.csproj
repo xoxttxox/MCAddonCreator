@@ -11,9 +11,9 @@
     <ApplicationIcon>assets\app.ico</ApplicationIcon>
     <AssemblyName>MCAddonErsteller</AssemblyName>
     <RootNamespace>MCAddonErsteller</RootNamespace>
-    <Version>1.0.0</Version>
-    <FileVersion>1.0.0.0</FileVersion>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <Version>1.0.1</Version>
+    <FileVersion>1.0.0.1</FileVersion>
+    <AssemblyVersion>1.0.0.1</AssemblyVersion>
     <Authors>MC Addon Ersteller</Authors>
     <Product>MC Addon Ersteller</Product>
     <Description>Ein kleiner WinForms Launcher zum Erstellen von Minecraft Bedrock .mcaddon Paketen aus BP/RP Ordnern oder ZIP-Dateien.</Description>
