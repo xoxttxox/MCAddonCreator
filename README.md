@@ -1,11 +1,13 @@
-# MC Addon Ersteller
-
 <div align="center">
 
-![Version](https://img.shields.io/github/v/release/xoxttxox/MC-Addon-Ersteller)
-![Downloads](https://img.shields.io/github/downloads/xoxttxox/MC-Addon-Ersteller/total)
-![License](https://img.shields.io/github/license/xoxttxox/MC-Addon-Ersteller)
-![.NET](https://img.shields.io/badge/.NET-10-blue)
+# MC Addon Ersteller
+
+[![Version](https://img.shields.io/github/v/release/xoxttxox/MC-Addon-Ersteller)](https://github.com/xoxttxox/MC-Addon-Ersteller/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/xoxttxox/MC-Addon-Ersteller/total)](https://github.com/xoxttxox/MC-Addon-Ersteller/releases)
+[![License](https://img.shields.io/github/license/xoxttxox/MC-Addon-Ersteller)](LICENSE)
+[![.NET](https://img.shields.io/badge/.NET-10-blue)](https://dotnet.microsoft.com/)
+
+Ein moderner Windows-Launcher zum Erstellen von Minecraft Bedrock Addons (`.mcaddon`) aus Behavior Packs (BP) und Resource Packs (RP).
 
 </div>
 
