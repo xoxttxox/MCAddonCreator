@@ -113,7 +113,7 @@ build\publish-win-x64.bat
 Danach liegt die fertige Datei hier:
 
 ```txt
-release\MC Addon Ersteller.exe
+release\MCAddonErsteller.exe
 ```
 
 Die EXE wird als **self-contained single file** gebaut. Dadurch braucht der Nutzer normalerweise keine extra .NET Runtime zu installieren.
