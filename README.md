@@ -1,9 +1,13 @@
 # MC Addon Ersteller
 
+<div align="center">
+
 ![Version](https://img.shields.io/github/v/release/xoxttxox/MC-Addon-Ersteller)
 ![Downloads](https://img.shields.io/github/downloads/xoxttxox/MC-Addon-Ersteller/total)
 ![License](https://img.shields.io/github/license/xoxttxox/MC-Addon-Ersteller)
 ![.NET](https://img.shields.io/badge/.NET-10-blue)
+
+</div>
 
 **MC Addon Ersteller** ist ein kleiner, einfacher Windows-Launcher zum Erstellen von Minecraft Bedrock Addons im `.mcaddon` Format.
 
