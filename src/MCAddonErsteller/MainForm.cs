@@ -848,7 +848,7 @@ public sealed partial class MainForm : Form
       .GetExecutingAssembly()
       .GetName()
       .Version?
-      .ToString(3) ?? "1.0.1";
+      .ToString(3) ?? "1.0.2";
   }
 
   private sealed class LineStatusRenderer : ToolStripProfessionalRenderer

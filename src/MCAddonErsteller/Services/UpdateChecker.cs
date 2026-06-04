@@ -60,6 +60,6 @@ public static class UpdateChecker
       .GetExecutingAssembly()
       .GetName()
       .Version?
-      .ToString(3) ?? "1.0.1";
+      .ToString(3) ?? "1.0.2";
   }
 }
