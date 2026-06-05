@@ -10,14 +10,14 @@
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
 		<ApplicationIcon>assets\app.ico</ApplicationIcon>
-		<AssemblyName>MCAddonErsteller</AssemblyName>
-		<RootNamespace>MCAddonErsteller</RootNamespace>
+		<AssemblyName>MCAddonCreator</AssemblyName>
+		<RootNamespace>MCAddonCreator</RootNamespace>
 				<Version>1.0.3</Version>
 				<FileVersion>1.0.3</FileVersion>
 				<AssemblyVersion>1.0.3</AssemblyVersion>
-		<Authors>MC Addon Ersteller</Authors>
-		<Product>MC Addon Ersteller</Product>
-		<Description>Ein kleiner WinForms Launcher zum Erstellen von Minecraft Bedrock .mcaddon Paketen aus BP/RP Ordnern oder ZIP-Dateien.</Description>
+		<Authors>MC Addon Creator</Authors>
+		<Product>MC Addon Creator</Product>
+		<Description>A modern Windows application for creating Minecraft Bedrock Edition Addons (.mcaddon) from Behavior Packs and Resource Packs.</Description>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<RepositoryType>git</RepositoryType>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>

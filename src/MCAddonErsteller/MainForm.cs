@@ -6,11 +6,11 @@ using System.Reflection;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Linq;
-using MCAddonErsteller.Controls;
-using MCAddonErsteller.Models;
-using MCAddonErsteller.Services;
+using MCAddonCreator.Controls;
+using MCAddonCreator.Models;
+using MCAddonCreator.Services;
 
-namespace MCAddonErsteller;
+namespace MCAddonCreator;
 
 public sealed partial class MainForm : Form
 {
@@ -143,13 +143,13 @@ public sealed partial class MainForm : Form
     }
   }
 
-  private sealed record LogEntry(DateTime Timestamp, string Message, MCAddonErsteller.Models.LogLevel Level)
+  private sealed record LogEntry(DateTime Timestamp, string Message, MCAddonCreator.Models.LogLevel Level)
   {
     public Color Color => Level switch
     {
-      MCAddonErsteller.Models.LogLevel.Error => LogColorError,
-      MCAddonErsteller.Models.LogLevel.Warning => LogColorWarning,
-      MCAddonErsteller.Models.LogLevel.Success => LogColorSuccess,
+      MCAddonCreator.Models.LogLevel.Error => LogColorError,
+      MCAddonCreator.Models.LogLevel.Warning => LogColorWarning,
+      MCAddonCreator.Models.LogLevel.Success => LogColorSuccess,
       _ => LogColorInfo
     };
   }
@@ -824,7 +824,7 @@ public sealed partial class MainForm : Form
       if (string.IsNullOrWhiteSpace(_versionText.Text) || _versionText.Text == "1.0.0")
         _versionText.Text = pack.Manifest.Version;
 
-      Log($"{role} selected: {pack.ArchiveFolderName}", MCAddonErsteller.Models.LogLevel.Info);
+      Log($"{role} selected: {pack.ArchiveFolderName}", MCAddonCreator.Models.LogLevel.Info);
       UpdateStatus($"{role} erkannt.");
     }
     catch (Exception ex)
@@ -834,7 +834,7 @@ public sealed partial class MainForm : Form
       else
         _rpInfoLabel.Text = "Manifest: Error";
 
-      Log($"ERROR {role}: {ex.Message}", MCAddonErsteller.Models.LogLevel.Error);
+      Log($"ERROR {role}: {ex.Message}", MCAddonCreator.Models.LogLevel.Error);
       UpdateStatus($"{role} Error.");
 
       MessageBox.Show(this, ex.Message, "Pack could not be read", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -903,7 +903,7 @@ public sealed partial class MainForm : Form
   }
 
   // Central logging entry point with explicit level
-  private void Log(string message, MCAddonErsteller.Models.LogLevel level)
+  private void Log(string message, MCAddonCreator.Models.LogLevel level)
   {
     if (_logText.InvokeRequired)
     {
@@ -928,7 +928,7 @@ public sealed partial class MainForm : Form
     AppendLogEntry(message, level);
   }
 
-  private void AppendLogEntry(string message, MCAddonErsteller.Models.LogLevel level)
+  private void AppendLogEntry(string message, MCAddonCreator.Models.LogLevel level)
   {
     var entry = new LogEntry(DateTime.Now, message, level);
     lock (_logEntries)
@@ -1040,7 +1040,7 @@ public sealed partial class MainForm : Form
     _statusLabel.Text = text;
     // Log status but avoid immediate duplicates
     if (!IsRecentDuplicateStatus(text))
-      Log(text, MCAddonErsteller.Models.LogLevel.Info);
+      Log(text, MCAddonCreator.Models.LogLevel.Info);
   }
 
   private void SetStatusReady(string text)
@@ -1054,7 +1054,7 @@ public sealed partial class MainForm : Form
     _statusLabel.Text = text;
     _statusDot.ForeColor = LogColorSuccess;
     if (!IsRecentDuplicateStatus(text))
-      Log(text, MCAddonErsteller.Models.LogLevel.Success);
+      Log(text, MCAddonCreator.Models.LogLevel.Success);
   }
 
   private void SetStatusWorking(string text)
@@ -1091,7 +1091,7 @@ public sealed partial class MainForm : Form
     _statusLabel.Text = text;
     _statusDot.ForeColor = LogColorError;
     if (!IsRecentDuplicateStatus(text))
-      Log(text, MCAddonErsteller.Models.LogLevel.Error);
+      Log(text, MCAddonCreator.Models.LogLevel.Error);
   }
 
   private bool IsRecentDuplicateStatus(string text)

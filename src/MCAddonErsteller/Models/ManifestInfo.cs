@@ -1,4 +1,4 @@
-namespace MCAddonErsteller.Models;
+namespace MCAddonCreator.Models;
 
 public sealed class ManifestInfo
 {

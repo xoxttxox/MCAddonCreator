@@ -1,24 +1,24 @@
 using System.Text.Json;
-using MCAddonErsteller.Models;
+using MCAddonCreator.Models;
 
-namespace MCAddonErsteller.Services;
+namespace MCAddonCreator.Services;
 
 // This comment ensures the file is touched so consumers that rely on the new Log API will load this assembly.
 public static class ManifestReader
 {
-  public static ManifestInfo Read(string manifestPath, Action<string, MCAddonErsteller.Models.LogLevel>? log = null)
+  public static ManifestInfo Read(string manifestPath, Action<string, MCAddonCreator.Models.LogLevel>? log = null)
   {
-    log?.Invoke($"Reading manifest: {manifestPath}", MCAddonErsteller.Models.LogLevel.Info);
+    log?.Invoke($"Reading manifest: {manifestPath}", MCAddonCreator.Models.LogLevel.Info);
 
     if (string.IsNullOrWhiteSpace(manifestPath))
     {
-      log?.Invoke("Manifest path must not be empty.", MCAddonErsteller.Models.LogLevel.Error);
+      log?.Invoke("Manifest path must not be empty.", MCAddonCreator.Models.LogLevel.Error);
       throw new ArgumentException("Manifest path must not be empty.", nameof(manifestPath));
     }
 
     if (!File.Exists(manifestPath))
     {
-      log?.Invoke($"Manifest file was not found: {manifestPath}", MCAddonErsteller.Models.LogLevel.Error);
+      log?.Invoke($"Manifest file was not found: {manifestPath}", MCAddonCreator.Models.LogLevel.Error);
       throw new FileNotFoundException("Manifest file was not found.", manifestPath);
     }
 
@@ -47,7 +47,7 @@ public static class ManifestReader
       Kind = ReadKind(root)
     };
 
-    log?.Invoke($"Manifest parsed: {info.Name} v{info.Version} ({info.Kind})", MCAddonErsteller.Models.LogLevel.Info);
+    log?.Invoke($"Manifest parsed: {info.Name} v{info.Version} ({info.Kind})", MCAddonCreator.Models.LogLevel.Info);
 
     return info;
   }

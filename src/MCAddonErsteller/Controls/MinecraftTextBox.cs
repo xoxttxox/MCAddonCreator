@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace MCAddonErsteller.Controls;
+namespace MCAddonCreator.Controls;
 
 public sealed class MinecraftTextBox : UserControl
 {

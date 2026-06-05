@@ -1,7 +1,7 @@
 using System.IO.Compression;
-using MCAddonErsteller.Models;
+using MCAddonCreator.Models;
 
-namespace MCAddonErsteller.Services;
+namespace MCAddonCreator.Services;
 
 public static class PackResolver
 {
@@ -14,11 +14,11 @@ public static class PackResolver
     "obj"
   ];
 
-  public static ResolvedPack Resolve(string sourcePath, string role, Action<string, MCAddonErsteller.Models.LogLevel>? log = null)
+  public static ResolvedPack Resolve(string sourcePath, string role, Action<string, MCAddonCreator.Models.LogLevel>? log = null)
   {
     if (string.IsNullOrWhiteSpace(sourcePath))
     {
-      log?.Invoke($"{role}: No path provided.", MCAddonErsteller.Models.LogLevel.Error);
+      log?.Invoke($"{role}: No path provided.", MCAddonCreator.Models.LogLevel.Error);
       throw new InvalidOperationException($"{role}: No path provided.");
     }
 
@@ -28,7 +28,7 @@ public static class PackResolver
     if (File.Exists(sourcePath))
       return ResolveZipLikeFile(sourcePath, role, log);
 
-    log?.Invoke($"{role}: Source not found: {sourcePath}", MCAddonErsteller.Models.LogLevel.Error);
+    log?.Invoke($"{role}: Source not found: {sourcePath}", MCAddonCreator.Models.LogLevel.Error);
     throw new FileNotFoundException($"{role}: Source not found.", sourcePath);
   }
 
@@ -40,17 +40,17 @@ public static class PackResolver
     TryDeleteDirectory(pack.TemporaryDirectory);
   }
 
-  private static ResolvedPack ResolveZipLikeFile(string sourcePath, string role, Action<string, MCAddonErsteller.Models.LogLevel>? log = null)
+  private static ResolvedPack ResolveZipLikeFile(string sourcePath, string role, Action<string, MCAddonCreator.Models.LogLevel>? log = null)
   {
     string extension = Path.GetExtension(sourcePath).ToLowerInvariant();
 
     if (extension is not ".zip" and not ".mcpack" and not ".mcaddon")
     {
-      log?.Invoke($"{role}: Unsupported extension {extension}", MCAddonErsteller.Models.LogLevel.Error);
+      log?.Invoke($"{role}: Unsupported extension {extension}", MCAddonCreator.Models.LogLevel.Error);
       throw new InvalidOperationException($"{role}: Only .zip, .mcpack, .mcaddon or folders are supported.");
     }
 
-    string tempRoot = Path.Combine(Path.GetTempPath(), "MCAddonErsteller_" + Guid.NewGuid().ToString("N"));
+    string tempRoot = Path.Combine(Path.GetTempPath(), "MCAddonCreator_" + Guid.NewGuid().ToString("N"));
     Directory.CreateDirectory(tempRoot);
 
     try
@@ -61,7 +61,7 @@ public static class PackResolver
     catch (InvalidDataException ex)
     {
       TryDeleteDirectory(tempRoot);
-      log?.Invoke($"{role}: Invalid archive file: {ex.Message}", MCAddonErsteller.Models.LogLevel.Error);
+      log?.Invoke($"{role}: Invalid archive file: {ex.Message}", MCAddonCreator.Models.LogLevel.Error);
       throw new InvalidOperationException($"{role}: The file is not a valid ZIP/MCPACK/MCADDON archive.", ex);
     }
     catch
@@ -71,7 +71,7 @@ public static class PackResolver
     }
   }
 
-  private static ResolvedPack ResolveDirectory(string sourceDirectory, string role, string? temporaryDirectory, string? originalSourceFile = null, Action<string, MCAddonErsteller.Models.LogLevel>? log = null)
+  private static ResolvedPack ResolveDirectory(string sourceDirectory, string role, string? temporaryDirectory, string? originalSourceFile = null, Action<string, MCAddonCreator.Models.LogLevel>? log = null)
   {
     string fullPath = Path.GetFullPath(sourceDirectory);
     string manifestPath = FindManifest(fullPath);

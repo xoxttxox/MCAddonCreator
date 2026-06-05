@@ -1,6 +1,7 @@
+using MCAddonCreator;
 using System.Windows.Forms;
 
-namespace MCAddonErsteller;
+namespace MCAddonCreator;
 
 internal static class Program
 {

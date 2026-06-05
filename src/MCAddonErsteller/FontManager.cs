@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-namespace MCAddonErsteller;
+namespace MCAddonCreator;
 
 public static partial class FontManager
 {

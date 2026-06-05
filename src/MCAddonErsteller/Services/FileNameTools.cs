@@ -1,7 +1,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace MCAddonErsteller.Services;
+namespace MCAddonCreator.Services;
 
 public static partial class FileNameTools
 {

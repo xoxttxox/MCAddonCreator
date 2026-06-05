@@ -2,7 +2,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace MCAddonErsteller.Controls;
+namespace MCAddonCreator.Controls;
 
 public class MinecraftProgressBar : Control
 {

@@ -30,5 +30,5 @@ if %ERRORLEVEL% neq 0 (
 
 echo.
 echo Fertig. EXE liegt hier:
-echo %CD%\%RELEASE_DIR%\MCAddonErsteller.exe
+echo %CD%\%RELEASE_DIR%\MCAddonCreator.exe
 pause

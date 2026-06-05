@@ -2,19 +2,19 @@
 using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text.Json;
-using MCAddonErsteller.Models;
+using MCAddonCreator.Models;
 
-namespace MCAddonErsteller.Services;
+namespace MCAddonCreator.Services;
 
 public static class UpdateChecker
 {
   private const string LatestReleaseUrl = "https://api.github.com/repos/xoxttxox/MC-Addon-Ersteller/releases/latest";
   private const string ReleasesPageUrl = "https://github.com/xoxttxox/MC-Addon-Ersteller/releases/latest";
 
-  public static async Task<UpdateResult> CheckForUpdateAsync(Action<string, MCAddonErsteller.Models.LogLevel>? log = null)
+  public static async Task<UpdateResult> CheckForUpdateAsync(Action<string, MCAddonCreator.Models.LogLevel>? log = null)
   {
     // Use Warning level for this status so the UI shows it as progress/yellow (avoid duplicate blue info)
-    log?.Invoke("Checking for updates...", MCAddonErsteller.Models.LogLevel.Warning);
+    log?.Invoke("Checking for updates...", MCAddonCreator.Models.LogLevel.Warning);
     string currentVersionText = GetCurrentVersion();
 
     using HttpClient client = new();
@@ -38,7 +38,7 @@ public static class UpdateChecker
     if (!Version.TryParse(latestVersionText, out Version? latest))
       latest = current;
 
-    log?.Invoke($"Update check complete: current={currentVersionText}, latest={latest}", MCAddonErsteller.Models.LogLevel.Info);
+    log?.Invoke($"Update check complete: current={currentVersionText}, latest={latest}", MCAddonCreator.Models.LogLevel.Info);
 
     return new UpdateResult
     {

@@ -1,7 +1,7 @@
 using System.IO.Compression;
-using MCAddonErsteller.Models;
+using MCAddonCreator.Models;
 
-namespace MCAddonErsteller.Services;
+namespace MCAddonCreator.Services;
 
 public static class McAddonBuilder
 {
@@ -22,13 +22,13 @@ public static class McAddonBuilder
       Report(options, 0, "Preparing build ...");
       StepDelay(options, cancellationToken);
 
-      options.Log?.Invoke("Checking selection ...", MCAddonErsteller.Models.LogLevel.Info);
+      options.Log?.Invoke("Checking selection ...", MCAddonCreator.Models.LogLevel.Info);
       StepDelay(options, cancellationToken);
 
       if (options.IncludeBehaviorPack)
       {
         Report(options, 8, "Reading Behavior Pack ...");
-        options.Log?.Invoke("Reading BP manifest.json ...", MCAddonErsteller.Models.LogLevel.Info);
+        options.Log?.Invoke("Reading BP manifest.json ...", MCAddonCreator.Models.LogLevel.Info);
 
         ResolvedPack bp = PackResolver.Resolve(options.BehaviorPackPath!, "BP", options.Log);
         packs.Add(bp);
@@ -36,7 +36,7 @@ public static class McAddonBuilder
         if (bp.TemporaryDirectory is not null)
           tempDirectories.Add(bp.TemporaryDirectory);
 
-        options.Log?.Invoke($"BP: {bp.Manifest.Name} | Version {bp.Manifest.Version} | Type {bp.Manifest.Kind}", MCAddonErsteller.Models.LogLevel.Info);
+        options.Log?.Invoke($"BP: {bp.Manifest.Name} | Version {bp.Manifest.Version} | Type {bp.Manifest.Kind}", MCAddonCreator.Models.LogLevel.Info);
         WarnIfKindMismatch(bp, expected: "behavior", options.Log);
 
         StepDelay(options, cancellationToken);
@@ -45,7 +45,7 @@ public static class McAddonBuilder
       if (options.IncludeResourcePack)
       {
         Report(options, 16, "Reading Resource Pack ...");
-        options.Log?.Invoke("Reading RP manifest.json ...", MCAddonErsteller.Models.LogLevel.Info);
+        options.Log?.Invoke("Reading RP manifest.json ...", MCAddonCreator.Models.LogLevel.Info);
 
         ResolvedPack rp = PackResolver.Resolve(options.ResourcePackPath!, "RP", options.Log);
         packs.Add(rp);
@@ -53,7 +53,7 @@ public static class McAddonBuilder
         if (rp.TemporaryDirectory is not null)
           tempDirectories.Add(rp.TemporaryDirectory);
 
-        options.Log?.Invoke($"RP: {rp.Manifest.Name} | Version {rp.Manifest.Version} | Type {rp.Manifest.Kind}", MCAddonErsteller.Models.LogLevel.Info);
+        options.Log?.Invoke($"RP: {rp.Manifest.Name} | Version {rp.Manifest.Version} | Type {rp.Manifest.Kind}", MCAddonCreator.Models.LogLevel.Info);
         WarnIfKindMismatch(rp, expected: "resource", options.Log);
 
         StepDelay(options, cancellationToken);
@@ -68,11 +68,11 @@ public static class McAddonBuilder
 
       if (File.Exists(outputPath))
       {
-        options.Log?.Invoke("Existing file will be replaced ...", MCAddonErsteller.Models.LogLevel.Warning);
+        options.Log?.Invoke("Existing file will be replaced ...", MCAddonCreator.Models.LogLevel.Warning);
         File.Delete(outputPath);
       }
 
-      options.Log?.Invoke($"Output: {outputPath}", MCAddonErsteller.Models.LogLevel.Info);
+      options.Log?.Invoke($"Output: {outputPath}", MCAddonCreator.Models.LogLevel.Info);
       StepDelay(options, cancellationToken);
 
       Report(options, 30, "Counting files ...");
@@ -83,7 +83,7 @@ public static class McAddonBuilder
       ];
 
       int totalFiles = packFileLists.Sum(pack => pack.Files.Count);
-      options.Log?.Invoke($"Files found: {totalFiles}", MCAddonErsteller.Models.LogLevel.Info);
+      options.Log?.Invoke($"Files found: {totalFiles}", MCAddonCreator.Models.LogLevel.Info);
       StepDelay(options, cancellationToken);
 
       using FileStream stream = File.Create(outputPath);
@@ -101,7 +101,7 @@ public static class McAddonBuilder
         usedFolderNames.Add(archiveFolderName);
 
         Report(options, CalculateFileProgress(processedFiles, totalFiles), $"Packing {archiveFolderName} ...");
-          options.Log?.Invoke($"Packing {archiveFolderName} ({packFiles.Files.Count} files) ...", MCAddonErsteller.Models.LogLevel.Info);
+          options.Log?.Invoke($"Packing {archiveFolderName} ({packFiles.Files.Count} files) ...", MCAddonCreator.Models.LogLevel.Info);
         StepDelay(options, cancellationToken);
 
         foreach (string filePath in packFiles.Files)
@@ -119,19 +119,19 @@ public static class McAddonBuilder
           Report(options, CalculateFileProgress(processedFiles, totalFiles), $"Packing files {processedFiles}/{totalFiles} ...");
 
           if (ShouldLogFileProgress(processedFiles, totalFiles))
-            options.Log?.Invoke($"Packing files: {processedFiles}/{totalFiles}", MCAddonErsteller.Models.LogLevel.Info);
+            options.Log?.Invoke($"Packing files: {processedFiles}/{totalFiles}", MCAddonCreator.Models.LogLevel.Info);
         }
 
-        options.Log?.Invoke($"{archiveFolderName} packed.", MCAddonErsteller.Models.LogLevel.Success);
+        options.Log?.Invoke($"{archiveFolderName} packed.", MCAddonCreator.Models.LogLevel.Success);
         StepDelay(options, cancellationToken);
       }
 
       Report(options, 96, "Finalizing MCADDON ...");
-      options.Log?.Invoke("Writing ZIP structure as .mcaddon ...", MCAddonErsteller.Models.LogLevel.Info);
+      options.Log?.Invoke("Writing ZIP structure as .mcaddon ...", MCAddonCreator.Models.LogLevel.Info);
       StepDelay(options, cancellationToken);
 
       Report(options, 100, "Done.");
-      options.Log?.Invoke("Done. MCADDON was created successfully.", MCAddonErsteller.Models.LogLevel.Success);
+      options.Log?.Invoke("Done. MCADDON was created successfully.", MCAddonCreator.Models.LogLevel.Success);
 
       return outputPath;
     }
@@ -160,7 +160,7 @@ public static class McAddonBuilder
       throw new InvalidOperationException("Please choose an output directory.");
   }
 
-  private static void WarnIfKindMismatch(ResolvedPack pack, string expected, Action<string, MCAddonErsteller.Models.LogLevel>? log)
+  private static void WarnIfKindMismatch(ResolvedPack pack, string expected, Action<string, MCAddonCreator.Models.LogLevel>? log)
   {
     if (pack.Manifest.Kind is "unknown" or "mixed")
       return;
@@ -168,7 +168,7 @@ public static class McAddonBuilder
     if (!pack.Manifest.Kind.Equals(expected, StringComparison.OrdinalIgnoreCase))
     {
       string expectedLabel = expected == "behavior" ? "Behavior Pack" : "Resource Pack";
-      log?.Invoke($"Warning: {pack.ArchiveFolderName} does not look like a {expectedLabel} according to manifest.json.", MCAddonErsteller.Models.LogLevel.Warning);
+      log?.Invoke($"Warning: {pack.ArchiveFolderName} does not look like a {expectedLabel} according to manifest.json.", MCAddonCreator.Models.LogLevel.Warning);
     }
   }
 
