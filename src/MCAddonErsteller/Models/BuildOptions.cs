@@ -9,7 +9,7 @@ public sealed class BuildOptions
   public required string PackageName { get; init; }
   public required string Version { get; init; }
   public required string OutputDirectory { get; init; }
-  public Action<string>? Log { get; init; }
+  public Action<string, LogLevel>? Log { get; init; }
   public Action<string>? Status { get; init; }
   public IProgress<double>? Progress { get; init; }
   public int StepDelayMilliseconds { get; init; } = 180;

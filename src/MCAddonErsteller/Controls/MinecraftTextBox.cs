@@ -36,7 +36,27 @@ public sealed class MinecraftTextBox : UserControl
   public bool ReadOnly
   {
     get => _textBox.ReadOnly;
-    set => _textBox.ReadOnly = value;
+    set
+    {
+      _textBox.ReadOnly = value;
+      // Fully disable the inner textbox when read-only so no interaction is possible
+      _textBox.Enabled = !value;
+      // Prevent keyboard/tab focus when read-only and show default cursor
+      _textBox.TabStop = !value;
+      _textBox.Cursor = value ? Cursors.Default : Cursors.IBeam;
+      _placeholderLabel.Cursor = value ? Cursors.Default : Cursors.IBeam;
+      // Disable selection, context menu and shortcuts when read-only
+      _textBox.ShortcutsEnabled = !value;
+      _textBox.ContextMenuStrip = value ? null : new ContextMenuStrip();
+
+      if (value)
+      {
+        _textBox.SelectionLength = 0;
+        _textBox.DeselectAll();
+      }
+
+      UpdatePlaceholder();
+    }
   }
 
   public new event EventHandler? TextChanged
@@ -66,13 +86,60 @@ public sealed class MinecraftTextBox : UserControl
     _placeholderLabel.Size = new Size(Width - 16, Height);
     _placeholderLabel.TextAlign = ContentAlignment.MiddleLeft;
     _placeholderLabel.Cursor = Cursors.IBeam;
-    _placeholderLabel.Click += (_, _) => _textBox.Focus();
+    _placeholderLabel.Click += (_, _) =>
+    {
+      if (!_textBox.ReadOnly)
+        _textBox.Focus();
+    };
+
+    // Prevent context menu and shortcuts by default; will be toggled with ReadOnly setter
+    _textBox.ContextMenuStrip = new ContextMenuStrip();
+    _textBox.ShortcutsEnabled = true;
+
+    // Prevent mouse interactions when read-only: redirect focus away and clear selection
+    _textBox.MouseDown += (_, _) =>
+    {
+      if (_textBox.ReadOnly)
+      {
+        _textBox.SelectionLength = 0;
+        this.SelectNextControl(this, forward: true, tabStopOnly: true, nested: true, wrap: true);
+      }
+    };
+
+    _textBox.MouseClick += (_, _) =>
+    {
+      if (_textBox.ReadOnly)
+      {
+        _textBox.SelectionLength = 0;
+        this.SelectNextControl(this, forward: true, tabStopOnly: true, nested: true, wrap: true);
+      }
+    };
+
+    _textBox.DoubleClick += (_, _) =>
+    {
+      if (_textBox.ReadOnly)
+      {
+        _textBox.SelectionLength = 0;
+        this.SelectNextControl(this, forward: true, tabStopOnly: true, nested: true, wrap: true);
+      }
+    };
 
     Controls.Add(_placeholderLabel);
     Controls.Add(_textBox);
 
     _textBox.TextChanged += (_, _) => UpdatePlaceholder();
-    _textBox.GotFocus += (_, _) => UpdatePlaceholder();
+    _textBox.GotFocus += (_, _) =>
+    {
+      // If textbox somehow gets focus while read-only, move focus to next control
+      if (_textBox.ReadOnly)
+      {
+        this.SelectNextControl(this, forward: true, tabStopOnly: true, nested: true, wrap: true);
+      }
+      else
+      {
+        UpdatePlaceholder();
+      }
+    };
     _textBox.LostFocus += (_, _) => UpdatePlaceholder();
 
     UpdatePlaceholder();

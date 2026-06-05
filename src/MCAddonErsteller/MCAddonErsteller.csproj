@@ -12,9 +12,9 @@
 		<ApplicationIcon>assets\app.ico</ApplicationIcon>
 		<AssemblyName>MCAddonErsteller</AssemblyName>
 		<RootNamespace>MCAddonErsteller</RootNamespace>
-		<Version>1.0.2</Version>
-		<FileVersion>1.0.2</FileVersion>
-		<AssemblyVersion>1.0.2</AssemblyVersion>
+				<Version>1.0.3</Version>
+				<FileVersion>1.0.3</FileVersion>
+				<AssemblyVersion>1.0.3</AssemblyVersion>
 		<Authors>MC Addon Ersteller</Authors>
 		<Product>MC Addon Ersteller</Product>
 		<Description>Ein kleiner WinForms Launcher zum Erstellen von Minecraft Bedrock .mcaddon Paketen aus BP/RP Ordnern oder ZIP-Dateien.</Description>
@@ -46,9 +46,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Update="assets\fonts\*.ttf">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
+		<EmbeddedResource Include="assets\fonts\*.ttf" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -14,18 +14,22 @@ public static class PackResolver
     "obj"
   ];
 
-  public static ResolvedPack Resolve(string sourcePath, string role)
+  public static ResolvedPack Resolve(string sourcePath, string role, Action<string, MCAddonErsteller.Models.LogLevel>? log = null)
   {
     if (string.IsNullOrWhiteSpace(sourcePath))
-      throw new InvalidOperationException($"{role}: Kein Pfad angegeben.");
+    {
+      log?.Invoke($"{role}: No path provided.", MCAddonErsteller.Models.LogLevel.Error);
+      throw new InvalidOperationException($"{role}: No path provided.");
+    }
 
     if (Directory.Exists(sourcePath))
-      return ResolveDirectory(sourcePath, role, temporaryDirectory: null);
+      return ResolveDirectory(sourcePath, role, temporaryDirectory: null, log: log);
 
     if (File.Exists(sourcePath))
-      return ResolveZipLikeFile(sourcePath, role);
+      return ResolveZipLikeFile(sourcePath, role, log);
 
-    throw new FileNotFoundException($"{role}: Quelle wurde nicht gefunden.", sourcePath);
+    log?.Invoke($"{role}: Source not found: {sourcePath}", MCAddonErsteller.Models.LogLevel.Error);
+    throw new FileNotFoundException($"{role}: Source not found.", sourcePath);
   }
 
   public static void DeleteTemporaryDirectory(ResolvedPack pack)
@@ -36,12 +40,15 @@ public static class PackResolver
     TryDeleteDirectory(pack.TemporaryDirectory);
   }
 
-  private static ResolvedPack ResolveZipLikeFile(string sourcePath, string role)
+  private static ResolvedPack ResolveZipLikeFile(string sourcePath, string role, Action<string, MCAddonErsteller.Models.LogLevel>? log = null)
   {
     string extension = Path.GetExtension(sourcePath).ToLowerInvariant();
 
     if (extension is not ".zip" and not ".mcpack" and not ".mcaddon")
-      throw new InvalidOperationException($"{role}: Nur .zip, .mcpack, .mcaddon oder Ordner werden unterstützt.");
+    {
+      log?.Invoke($"{role}: Unsupported extension {extension}", MCAddonErsteller.Models.LogLevel.Error);
+      throw new InvalidOperationException($"{role}: Only .zip, .mcpack, .mcaddon or folders are supported.");
+    }
 
     string tempRoot = Path.Combine(Path.GetTempPath(), "MCAddonErsteller_" + Guid.NewGuid().ToString("N"));
     Directory.CreateDirectory(tempRoot);
@@ -49,12 +56,13 @@ public static class PackResolver
     try
     {
       ZipFile.ExtractToDirectory(sourcePath, tempRoot, overwriteFiles: true);
-      return ResolveDirectory(tempRoot, role, temporaryDirectory: tempRoot, originalSourceFile: sourcePath);
+      return ResolveDirectory(tempRoot, role, temporaryDirectory: tempRoot, originalSourceFile: sourcePath, log: log);
     }
     catch (InvalidDataException ex)
     {
       TryDeleteDirectory(tempRoot);
-      throw new InvalidOperationException($"{role}: Die Datei ist kein gültiges ZIP/MCPACK/MCADDON Archiv.", ex);
+      log?.Invoke($"{role}: Invalid archive file: {ex.Message}", MCAddonErsteller.Models.LogLevel.Error);
+      throw new InvalidOperationException($"{role}: The file is not a valid ZIP/MCPACK/MCADDON archive.", ex);
     }
     catch
     {
@@ -63,12 +71,12 @@ public static class PackResolver
     }
   }
 
-  private static ResolvedPack ResolveDirectory(string sourceDirectory, string role, string? temporaryDirectory, string? originalSourceFile = null)
+  private static ResolvedPack ResolveDirectory(string sourceDirectory, string role, string? temporaryDirectory, string? originalSourceFile = null, Action<string, MCAddonErsteller.Models.LogLevel>? log = null)
   {
     string fullPath = Path.GetFullPath(sourceDirectory);
     string manifestPath = FindManifest(fullPath);
     string rootDirectory = Path.GetDirectoryName(manifestPath) ?? fullPath;
-    ManifestInfo manifest = ManifestReader.Read(manifestPath);
+    ManifestInfo manifest = ManifestReader.Read(manifestPath, log);
 
     string folderName = Path.GetFileName(rootDirectory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
 
@@ -114,7 +122,7 @@ public static class PackResolver
     ];
 
     if (allManifests.Length == 0)
-      throw new InvalidOperationException("Keine manifest.json gefunden. Bitte den richtigen BP/RP Ordner oder eine passende ZIP auswählen.");
+      throw new InvalidOperationException("No manifest.json found. Please select the correct BP/RP folder or a matching ZIP.");
 
     return allManifests[0];
   }
@@ -145,7 +153,7 @@ public static class PackResolver
     }
     catch
     {
-      // Temp cleanup darf nie den eigentlichen Fehler verstecken.
+      // Temp cleanup must never hide the original error.
     }
   }
 }

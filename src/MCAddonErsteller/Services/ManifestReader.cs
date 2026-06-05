@@ -3,15 +3,24 @@ using MCAddonErsteller.Models;
 
 namespace MCAddonErsteller.Services;
 
+// This comment ensures the file is touched so consumers that rely on the new Log API will load this assembly.
 public static class ManifestReader
 {
-  public static ManifestInfo Read(string manifestPath)
+  public static ManifestInfo Read(string manifestPath, Action<string, MCAddonErsteller.Models.LogLevel>? log = null)
   {
+    log?.Invoke($"Reading manifest: {manifestPath}", MCAddonErsteller.Models.LogLevel.Info);
+
     if (string.IsNullOrWhiteSpace(manifestPath))
-      throw new ArgumentException("Manifest-Pfad darf nicht leer sein.", nameof(manifestPath));
+    {
+      log?.Invoke("Manifest path must not be empty.", MCAddonErsteller.Models.LogLevel.Error);
+      throw new ArgumentException("Manifest path must not be empty.", nameof(manifestPath));
+    }
 
     if (!File.Exists(manifestPath))
-      throw new FileNotFoundException("Manifest-Datei wurde nicht gefunden.", manifestPath);
+    {
+      log?.Invoke($"Manifest file was not found: {manifestPath}", MCAddonErsteller.Models.LogLevel.Error);
+      throw new FileNotFoundException("Manifest file was not found.", manifestPath);
+    }
 
     using FileStream stream = File.OpenRead(manifestPath);
     using JsonDocument document = JsonDocument.Parse(stream, new JsonDocumentOptions
@@ -23,13 +32,13 @@ public static class ManifestReader
     JsonElement root = document.RootElement;
 
     if (root.ValueKind != JsonValueKind.Object)
-      throw new InvalidDataException("manifest.json ist ungültig.");
+      throw new InvalidDataException("manifest.json is invalid.");
 
     JsonElement header = root.TryGetProperty("header", out JsonElement h) && h.ValueKind == JsonValueKind.Object
       ? h
       : root;
 
-    return new ManifestInfo
+    var info = new ManifestInfo
     {
       Name = ReadString(header, "name", "Unbekannt"),
       Description = ReadString(header, "description", string.Empty),
@@ -37,6 +46,10 @@ public static class ManifestReader
       Version = ReadVersion(header, "version", "1.0.0"),
       Kind = ReadKind(root)
     };
+
+    log?.Invoke($"Manifest parsed: {info.Name} v{info.Version} ({info.Kind})", MCAddonErsteller.Models.LogLevel.Info);
+
+    return info;
   }
 
   private static string ReadString(JsonElement element, string propertyName, string fallback)

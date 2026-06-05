@@ -19,45 +19,47 @@ public static class McAddonBuilder
 
     try
     {
-      Report(options, 0, "Build wird vorbereitet ...");
+      Report(options, 0, "Preparing build ...");
       StepDelay(options, cancellationToken);
 
-      options.Log?.Invoke("Prüfe Auswahl ...");
+      options.Log?.Invoke("Checking selection ...", MCAddonErsteller.Models.LogLevel.Info);
       StepDelay(options, cancellationToken);
 
       if (options.IncludeBehaviorPack)
       {
-        Report(options, 8, "Lese Behavior Pack ...");
-        options.Log?.Invoke("Lese BP manifest.json ...");
+        Report(options, 8, "Reading Behavior Pack ...");
+        options.Log?.Invoke("Reading BP manifest.json ...", MCAddonErsteller.Models.LogLevel.Info);
 
-        ResolvedPack bp = PackResolver.Resolve(options.BehaviorPackPath!, "BP");
+        ResolvedPack bp = PackResolver.Resolve(options.BehaviorPackPath!, "BP", options.Log);
         packs.Add(bp);
 
         if (bp.TemporaryDirectory is not null)
           tempDirectories.Add(bp.TemporaryDirectory);
 
-        options.Log?.Invoke($"BP erkannt: {bp.Manifest.Name} | Version {bp.Manifest.Version} | Typ {bp.Manifest.Kind}");
+        options.Log?.Invoke($"BP: {bp.Manifest.Name} | Version {bp.Manifest.Version} | Type {bp.Manifest.Kind}", MCAddonErsteller.Models.LogLevel.Info);
         WarnIfKindMismatch(bp, expected: "behavior", options.Log);
+
         StepDelay(options, cancellationToken);
       }
 
       if (options.IncludeResourcePack)
       {
-        Report(options, 16, "Lese Resource Pack ...");
-        options.Log?.Invoke("Lese RP manifest.json ...");
+        Report(options, 16, "Reading Resource Pack ...");
+        options.Log?.Invoke("Reading RP manifest.json ...", MCAddonErsteller.Models.LogLevel.Info);
 
-        ResolvedPack rp = PackResolver.Resolve(options.ResourcePackPath!, "RP");
+        ResolvedPack rp = PackResolver.Resolve(options.ResourcePackPath!, "RP", options.Log);
         packs.Add(rp);
 
         if (rp.TemporaryDirectory is not null)
           tempDirectories.Add(rp.TemporaryDirectory);
 
-        options.Log?.Invoke($"RP erkannt: {rp.Manifest.Name} | Version {rp.Manifest.Version} | Typ {rp.Manifest.Kind}");
+        options.Log?.Invoke($"RP: {rp.Manifest.Name} | Version {rp.Manifest.Version} | Type {rp.Manifest.Kind}", MCAddonErsteller.Models.LogLevel.Info);
         WarnIfKindMismatch(rp, expected: "resource", options.Log);
+
         StepDelay(options, cancellationToken);
       }
 
-      Report(options, 24, "Bereite Ausgabe vor ...");
+      Report(options, 24, "Preparing output ...");
       Directory.CreateDirectory(options.OutputDirectory);
 
       string safeName = FileNameTools.ToSafeFileName(options.PackageName, "MeinAddon");
@@ -66,14 +68,14 @@ public static class McAddonBuilder
 
       if (File.Exists(outputPath))
       {
-        options.Log?.Invoke("Vorhandene Datei wird ersetzt ...");
+        options.Log?.Invoke("Existing file will be replaced ...", MCAddonErsteller.Models.LogLevel.Warning);
         File.Delete(outputPath);
       }
 
-      options.Log?.Invoke($"Ausgabe: {outputPath}");
+      options.Log?.Invoke($"Output: {outputPath}", MCAddonErsteller.Models.LogLevel.Info);
       StepDelay(options, cancellationToken);
 
-      Report(options, 30, "Zähle Dateien ...");
+      Report(options, 30, "Counting files ...");
 
       List<PackFileList> packFileLists =
       [
@@ -81,7 +83,7 @@ public static class McAddonBuilder
       ];
 
       int totalFiles = packFileLists.Sum(pack => pack.Files.Count);
-      options.Log?.Invoke($"Dateien gefunden: {totalFiles}");
+      options.Log?.Invoke($"Files found: {totalFiles}", MCAddonErsteller.Models.LogLevel.Info);
       StepDelay(options, cancellationToken);
 
       using FileStream stream = File.Create(outputPath);
@@ -98,8 +100,8 @@ public static class McAddonBuilder
         string archiveFolderName = GetUniqueFolderName(pack.ArchiveFolderName, usedFolderNames);
         usedFolderNames.Add(archiveFolderName);
 
-        Report(options, CalculateFileProgress(processedFiles, totalFiles), $"Packe {archiveFolderName} ...");
-        options.Log?.Invoke($"Packe {archiveFolderName} ({packFiles.Files.Count} Dateien) ...");
+        Report(options, CalculateFileProgress(processedFiles, totalFiles), $"Packing {archiveFolderName} ...");
+          options.Log?.Invoke($"Packing {archiveFolderName} ({packFiles.Files.Count} files) ...", MCAddonErsteller.Models.LogLevel.Info);
         StepDelay(options, cancellationToken);
 
         foreach (string filePath in packFiles.Files)
@@ -114,22 +116,22 @@ public static class McAddonBuilder
           archive.CreateEntryFromFile(filePath, entryName, CompressionLevel.Optimal);
 
           processedFiles++;
-          Report(options, CalculateFileProgress(processedFiles, totalFiles), $"Packe Dateien {processedFiles}/{totalFiles} ...");
+          Report(options, CalculateFileProgress(processedFiles, totalFiles), $"Packing files {processedFiles}/{totalFiles} ...");
 
           if (ShouldLogFileProgress(processedFiles, totalFiles))
-            options.Log?.Invoke($"Packe Dateien: {processedFiles}/{totalFiles}");
+            options.Log?.Invoke($"Packing files: {processedFiles}/{totalFiles}", MCAddonErsteller.Models.LogLevel.Info);
         }
 
-        options.Log?.Invoke($"{archiveFolderName} fertig gepackt.");
+        options.Log?.Invoke($"{archiveFolderName} packed.", MCAddonErsteller.Models.LogLevel.Success);
         StepDelay(options, cancellationToken);
       }
 
-      Report(options, 96, "Schreibe MCADDON fertig ...");
-      options.Log?.Invoke("Schreibe ZIP-Struktur als .mcaddon ...");
+      Report(options, 96, "Finalizing MCADDON ...");
+      options.Log?.Invoke("Writing ZIP structure as .mcaddon ...", MCAddonErsteller.Models.LogLevel.Info);
       StepDelay(options, cancellationToken);
 
-      Report(options, 100, "Fertig.");
-      options.Log?.Invoke("Fertig. MCADDON wurde erfolgreich erstellt.");
+      Report(options, 100, "Done.");
+      options.Log?.Invoke("Done. MCADDON was created successfully.", MCAddonErsteller.Models.LogLevel.Success);
 
       return outputPath;
     }
@@ -143,22 +145,22 @@ public static class McAddonBuilder
   private static void ValidateOptions(BuildOptions options)
   {
     if (!options.IncludeBehaviorPack && !options.IncludeResourcePack)
-      throw new InvalidOperationException("Bitte mindestens BP oder RP auswählen.");
+      throw new InvalidOperationException("Please select at least BP or RP.");
 
     if (options.IncludeBehaviorPack && string.IsNullOrWhiteSpace(options.BehaviorPackPath))
-      throw new InvalidOperationException("BP ist aktiviert, aber es wurde keine BP-Quelle ausgewählt.");
+      throw new InvalidOperationException("BP is enabled but no BP source was selected.");
 
     if (options.IncludeResourcePack && string.IsNullOrWhiteSpace(options.ResourcePackPath))
-      throw new InvalidOperationException("RP ist aktiviert, aber es wurde keine RP-Quelle ausgewählt.");
+      throw new InvalidOperationException("RP is enabled but no RP source was selected.");
 
     if (string.IsNullOrWhiteSpace(options.PackageName))
-      throw new InvalidOperationException("Bitte einen Addon-Namen eintragen.");
+      throw new InvalidOperationException("Please enter an addon name.");
 
     if (string.IsNullOrWhiteSpace(options.OutputDirectory))
-      throw new InvalidOperationException("Bitte einen Ausgabeordner auswählen.");
+      throw new InvalidOperationException("Please choose an output directory.");
   }
 
-  private static void WarnIfKindMismatch(ResolvedPack pack, string expected, Action<string>? log)
+  private static void WarnIfKindMismatch(ResolvedPack pack, string expected, Action<string, MCAddonErsteller.Models.LogLevel>? log)
   {
     if (pack.Manifest.Kind is "unknown" or "mixed")
       return;
@@ -166,7 +168,7 @@ public static class McAddonBuilder
     if (!pack.Manifest.Kind.Equals(expected, StringComparison.OrdinalIgnoreCase))
     {
       string expectedLabel = expected == "behavior" ? "Behavior Pack" : "Resource Pack";
-      log?.Invoke($"WARNUNG: {pack.ArchiveFolderName} sieht laut manifest.json nicht wie ein {expectedLabel} aus.");
+      log?.Invoke($"Warning: {pack.ArchiveFolderName} does not look like a {expectedLabel} according to manifest.json.", MCAddonErsteller.Models.LogLevel.Warning);
     }
   }
 
