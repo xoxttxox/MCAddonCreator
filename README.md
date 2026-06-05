@@ -15,6 +15,8 @@ A modern Windows application for creating Minecraft Bedrock Edition Addons (`.mc
 
 **MC Addon Creator** is a lightweight Windows application that allows you to quickly build Minecraft Bedrock Edition Addons in the `.mcaddon` format.
 
+![Preview](docs/preview.png)
+
 The application supports Behavior Packs, Resource Packs, or a combination of both and automatically generates a clean `.mcaddon` package with a versioned file name.
 
 Example:
